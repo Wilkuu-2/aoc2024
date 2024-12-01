@@ -1,3 +1,6 @@
+# Data folder
+data
+
 # Compiled Lua sources
 luac.out
 
