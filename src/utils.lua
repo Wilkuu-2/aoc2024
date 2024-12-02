@@ -86,5 +86,4 @@ end
 return {
   dump = dump,
   create = create,
-  copy = table.copy
 }
