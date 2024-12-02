@@ -1,50 +1,85 @@
 local aoc = require("src.utils")
 
-local p1data = aoc.data(1,1)
+-- if unpack == nil then 
+--   unpack = table.unpack
+-- end  
 
-local pl = {}
-local pr = {}
-local i = 1;
-for line in string.gmatch(p1data.input,"%d+") do
-  if (i % 2 == 0) then
-    local z = i/2
-    pr[z] = tonumber(line)
-  else
-    local z = (i+1)/2
-    pl[z] = tonumber(line)
+local p1data = aoc.create(1)
+
+
+local function init (args)
+  local i = 1;
+  -- Part 2 depends on the final state of part 1
+  args.state.pl = {} 
+  args.state.pr = {}
+  for line in args.input do
+    -- io.write(line)
+    local ns = line:gmatch("%d+")
+    -- Bisect is slower than sorting afterwards on lua for some reason 
+    -- Sort is probably optimized well in C 
+    -- bisect_insert(pl,tonumber(ns()))
+    -- bisect_insert(pr,tonumber(ns()))
+    
+    args.state.pl[i] = tonumber(ns())
+    args.state.pr[i] = tonumber(ns())
+    i = i + 1
   end
-  i = i + 1
+  return 0
 end
 
-table.sort(pl);
-table.sort(pr);
+local function part1(args)
+  local pl = args.state.pl
+  local pr = args.state.pr
+  table.sort(pl);
+  table.sort(pr);
 
-local sum = 0
-local function dist (a, b)
-  if a < b then
-     return b - a
-  else
-     return a - b
-  end
-end
-
-for p = 1,#pl,1 do
-  sum = sum + dist(pl[p],pr[p])
-end
-
-print(sum)
-
-local sum2 = 0
-
-for l = 1,#pl,1 do
-  local n = pl[l]
-  local k = 0;
-  for r = 1,#pr,1 do
-    if pr[r] == n then
-      k = k+1
+  local sum = 0
+  local function dist (a, b)
+    if a < b then
+       return b - a
+    else
+       return a - b
     end
   end
-  sum2 = sum2 + (k * n)
+
+  for p = 1,#pl,1 do
+    sum = sum + dist(pl[p],pr[p])
+  end
+  return sum 
 end
 
-print(sum2)
+local function freq(t)
+  local fr = {}
+  local l = 0
+  for _,x in ipairs(t) do
+    local f = fr[x]
+    -- print(x,f)
+    if f == nil then 
+      fr[x] = 1
+      l = l+1
+    else  
+      fr[x] = f + 1
+    end 
+  end
+  -- print(aoc.dump(fr))
+  return fr 
+end
+
+local function part2 (args)
+  local pr = args.state.pr
+  local pl = args.state.pl
+  local sum2 = 0
+  local fr = freq(pr)
+  for _,n in pairs(pl) do
+    local f = fr[n] 
+    if f == nil then 
+      f = 0
+    end 
+    sum2 = sum2 + (n * f)
+  end
+    return sum2
+end
+
+p1data:run(init, {}, 0)
+p1data:run(part1, {}, 11)
+p1data:run(part2, {}, 31)

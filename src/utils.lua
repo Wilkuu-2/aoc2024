@@ -1,19 +1,90 @@
-
-function getfile(filename)
+local function getfile(filename)
   local file = assert(io.open(filename, "rb"))
-  local content = file:read("*all")
-
-  return content
+  return string.gmatch(file:read("*a"), "[^\n]+\n?") 
 end
 
-function data(day, partn)
+
+local function dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
+local function measure(d, p, fn, args) 
+    -- TODO: default args argument
+    local begin = os.clock() 
+    local result = fn(args)
+    -- TODO: Better time formatting
+    print("== Day " .. d .. " part " .. p ..": " .. result ..  " (" ..(os.clock() - begin) * 1000 .."ms)")
+end
+
+local function test(d,p, fn, args, expected) 
+  local result = fn(args) 
+  if result ~= expected then 
+    print("$$ Day " .. d .. "part " .. p .. " example mismatch: " .. result .. " (" .. expected .. " expected)")
+    return false 
+  end
+  return true 
+end 
+  
+AocDay = {
+  day = 0, 
+  partn = 0,
+  input = "", 
+  example = "",
+  state = {},
+  teststate = {}, 
+}
+
+function table.copy(t)
+  local u = { }
+  for k, v in pairs(t) do u[k] = v end
+  return setmetatable(u, getmetatable(t))
+end
+
+
+function AocDay:run(fn, args, expected) 
+  local main_args = table.copy(args)
+  main_args.input  = self.input
+  main_args.state = self.state
+
+  local test_args = table.copy(args)
+  test_args.state = self.teststate 
+  test_args.input  = self.example
+
+  local test_r = test(self.day, self.partn, fn, test_args, expected) 
+  if test_r then 
+    measure(self.day, self.partn, fn, main_args)
+  end 
+
+  self.partn = self.partn + 1
+  return test_r
+end 
+
+
+local function create(d)
   return {
-    example =  getfile("data/day" .. day .. "/example" .. partn ..".txt"),
-    ex_res = getfile("data/day" .. day .. "/ex_res" .. partn .. ".txt"),
-    input = getfile("data/day" .. day .. "/input" .. partn .. ".txt"),
-  }
+    day = d, 
+    partn = 0, 
+    example =  getfile("data/day" ..  d .. "/example1.txt"),
+    input = getfile("data/day" .. d .. "/input1.txt"),
+    state = {}, 
+    teststate = {}, 
+    run = AocDay.run,
+  } 
+  
 end
+
 
 return {
-  data = data,
+  dump = dump,
+  create = create,
+  copy = table.copy
 }
