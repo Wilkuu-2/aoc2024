@@ -1,5 +1,4 @@
 local aoc = require("src.utils")
-
 -- if unpack == nil then 
 --   unpack = table.unpack
 -- end  
@@ -82,4 +81,4 @@ end
 
 p1data:run(init, {}, 0)
 p1data:run(part1, {}, 11)
-p1data:run(part2, {}, 31)
+p1data:run(part2, {example = "" }, 31)

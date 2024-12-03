@@ -28,7 +28,7 @@ end
 local function test(d,p, fn, args, expected) 
   local result = fn(args) 
   if result ~= expected then 
-    print("$$ Day " .. d .. "part " .. p .. " example mismatch: " .. result .. " (" .. expected .. " expected)")
+    print("$$ Day " .. d .. " part " .. p .. " example mismatch: " .. result .. " (" .. expected .. " expected)")
     return false 
   end
   return true 
@@ -57,7 +57,12 @@ function AocDay:run(fn, args, expected)
 
   local test_args = table.copy(args)
   test_args.state = self.teststate 
-  test_args.input  = self.example
+  if args.example ~= nil then 
+    print("testing with input: ", args.example)
+    test_args.input = args.example
+  else 
+    test_args.input  = self.example
+  end 
 
   local test_r = test(self.day, self.partn, fn, test_args, expected) 
   if test_r then 
