@@ -8,6 +8,9 @@ function Iter:create(fn)
 end
 
 function Iter:wrap(fn) 
+  if type(fn) == 'table' and getmetatable(fn) == Iter then 
+    return fn    
+  end 
   local i = 0 
   local v = 0
   local function f()
