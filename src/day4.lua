@@ -17,50 +17,6 @@ local exaple2 = {
 	[10] = "MXMXAXMASX",
 }
 
-local function match_horizontal(lines, x, y) 
-  local c = lines[y]:sub(x,x)
-  if c == nil  or c ~= word:sub(1,1) then return 0 end 
-
-  local s = lines[y]:sub(x, x+word:len() - 1) 
-  local r = lines[y]:sub(x-word:len() + 1, x):reverse() 
-  
-  local res = 0
-  if s == word then res = res + 1 end 
-  if r == word then res = res + 1 end 
-  return res 
-end 
-
-local function match_vertical(lines, x, y) 
-  local res = 0
-  local c = lines[y]:sub(x,x)
-  if c == nil  or c ~= word:sub(1,1) then return 0 end 
-
-  local s = "" 
-  local w = y + word:len() - 1 
-  if w <= #lines then  
-    for linen = y,w,1 do 
-      local d = lines[linen]:sub(x,x)
-      s = s .. d 
-    end 
-    if s == word then res = res + 1 end 
-  end 
-
-
-  local r = "" 
-  local z = y-word:len() + 1 
-  
-  if z > 0 then 
-    for linen = z,y,1 do 
-      local d = lines[linen]:sub(x,x)
-      r = r .. d 
-    end 
-    r = r:reverse()
-    if r == word then res = res + 1 end 
-  end 
-
-  return res
-end 
-
 local function substr_diag_match(lines, x,y, cx, cy, match_str) 
   local s = "" 
   local d = match_str:len()
@@ -89,6 +45,11 @@ local function match_diagonal(lines, x, y, w)
   m = m + substr_diag_match(lines, x,y, 1, -1, w)
   m = m + substr_diag_match(lines, x,y, -1, 1, w)
   m = m + substr_diag_match(lines, x,y, -1, -1, w)
+
+  m = m + substr_diag_match(lines, x,y, 0, 1, w)
+  m = m + substr_diag_match(lines, x,y, 0, -1, w)
+  m = m + substr_diag_match(lines, x,y, 1, 0, w)
+  m = m + substr_diag_match(lines, x,y, -1, 0, w)
   
   return m
 end 
@@ -111,7 +72,7 @@ local function part1 (i)
   local lines = i.state.lines 
   for y = 1,#lines,1 do 
     for x = 1,i.state.line_width,1 do 
-      res = res + match_horizontal(lines, x, y) + match_vertical(lines, x ,y) + match_diagonal(lines, x, y, word) 
+      res = res + match_diagonal(lines, x, y, word) 
     end 
   end  
   return res
@@ -136,12 +97,6 @@ local function p2test(lines, x,y)
 
   m = m + p2subtest(lines,x,y, 1,1)
   m = m + p2subtest(lines,x,y, -1,1)
-
-  if false and m >= 2 then 
-    io.write(lines[y-1]:sub(x-1, x+1) .. "\n")
-    io.write(lines[y  ]:sub(x-1, x+1) .. "\n")
-    io.write(lines[y+1]:sub(x-1, x+1) .. "\n")
-  end 
   
   return m >= 2 
   
@@ -184,10 +139,7 @@ local test_2 = {
   [2] = "XAX", 
   [3] = "SAS", 
 }
-
-assert_eq(match_vertical(test_1, 4, 4),2)
-assert_eq(match_horizontal(test_1, 4, 4),2)
-assert_eq(match_diagonal(test_1, 4, 4, word),4)
+assert_eq(match_diagonal(test_1, 4, 4, word),8)
 assert_eq(part1({input = table.ipair_iter(test_1), state={}}), 8)
 
 print("Running part 1")

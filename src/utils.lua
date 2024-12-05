@@ -33,15 +33,9 @@ local function test(d,p, fn, args, expected)
   end
   return true 
 end 
-  
-AocDay = {
-  day = 0, 
-  partn = 0,
-  input = "", 
-  example = "",
-  state = {},
-  teststate = {}, 
-}
+
+---@class 
+AocDay = {}
 
 function table.copy(t)
   local u = { }
@@ -49,7 +43,11 @@ function table.copy(t)
   return setmetatable(u, getmetatable(t))
 end
 
-
+---comment
+---@param fn fun(i: {input:fun(): string|nil, state: table})
+---@param args table 
+---@param expected integer
+---@return boolean
 function AocDay:run(fn, args, expected) 
   local main_args = table.copy(args)
   main_args.input  = self.input
