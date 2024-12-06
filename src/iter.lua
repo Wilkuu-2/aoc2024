@@ -86,6 +86,18 @@ function Iter:filter(fn)
   return filter 
 end 
 
+function Iter:find(fn) 
+  local _,x = self.fn()
+  while x ~= nil do
+      local b = fn(x)
+      if(b) then
+        return x 
+      end 
+      _,x = self.fn()
+  end
+  
+end 
+
 function Iter:fold(init, fn) 
   for _,x in self.fn do
     init = fn(init,x)

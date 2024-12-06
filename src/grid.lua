@@ -51,6 +51,7 @@ function Grid:get(x,y)
   end 
   return self.data[y]:sub(x,x)
 end
+
 ---comment
 ---@param x integer
 ---@param y integer
@@ -186,9 +187,11 @@ function Grid:to_string()
   return self:get_lines():stitch_lines()
 end
 
+
 local function test()
   print("creating grid")
   local test1 = Grid:fromLineIter(Iter:rep("12345", 5)) 
+  assert(test1:get(1,1) == 1)
   print("taking super grid")
   local super = test1:rect_fill(0,0,7,7,"X")
   print("printint")
@@ -200,5 +203,4 @@ local function test()
     return 1 
   end):collect() 
 end
-
 
