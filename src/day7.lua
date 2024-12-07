@@ -25,10 +25,14 @@ local function init(args)
 end
 
 
-local function int_concat(a,b) 
-  return tonumber(""..a..b)
-end
+--  pt1  2437272016585
+--  pt2 162987117690649
 
+local function int_concat(a,b) 
+  return b + a * (10 ^ #(tostring(b)))
+  -- return b + (a * (10 ^ math.floor(math.log(b, 10)))) 
+  -- return tonumber(""..a..b)
+end
 
 ---comment
 ---@param eq Equation
@@ -61,6 +65,7 @@ local function find_solutions(eq, muls, concats ,  s ,b, e)
   return m0 or m1 or m2
 end 
 
+
 local function part1(args)
   ---@type Equation[]
   local equations = args.state.equations 
@@ -77,14 +82,14 @@ end
 local function part2(args)
   ---@type Equation[]
   local equations = args.state.equations 
-  local acc = 0 
-  for _,eq in ipairs(equations) do 
-    local sols = find_solutions(eq, 0, #eq.factors, eq.factors[1], 2, #eq.factors)
-    if sols then 
-      acc = acc + eq.result 
+  local acc =  0 
+  for _,eq in ipairs(equations)  do
+    local solvable = find_solutions(eq, 0, #eq.factors, eq.factors[1], 2, #eq.factors)
+    if solvable then 
+      acc  = acc + eq.result 
     end 
   end 
-  return acc 
+  return acc
 end
 
 day7:run(init, {}, 9)
