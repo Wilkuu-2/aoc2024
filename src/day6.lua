@@ -128,14 +128,18 @@ local function most_crossed(p1, p2, pt)
     if c2 == nil and c1 == nil then
         return p1.grid:get(pt.x, pt.y)
     elseif c1 == nil then
-        return "*"
+        return ";"
     elseif c2 ~= nil and count_dirs(p2) > count_dirs(p1) then
-        return "*"
+        return ";"
     else
-        return "@"
+        return "*"
     end
 end
 
+local function sleep(a)
+    local sec = tonumber(os.clock() + a);
+    while (os.clock() < sec) do end
+end
 ---comment
 ---@param p1 Path
 ---@param p2 Path
@@ -154,14 +158,9 @@ function Path.duo_print(p1, p2)
         return s .. ch
     end) .. "\n\n")
     io.flush()
-    sleep(0.01)
-
+     -- sleep(0.00)
 end
 
-function sleep(a)
-    local sec = tonumber(os.clock() + a);
-    while (os.clock() < sec) do end
-end
 
 local dirs = {
     [1] = Point:new(0, -1),
@@ -234,7 +233,9 @@ local function part2(args)
         local g = npath.grid:get(il.x, il.y)
         if g ~= nil and dupe_set[il:to_string()] == nil and npath:get_step(il) ==
             nil then
-            local ret = traverse(npath:copy(), function() end, false, il)
+            local ret = traverse(npath:copy(), function(cpath) 
+              Path.duo_print(npath, cpath)
+            end, false, il)
             if ret == nil then
                 -- sum = sum + 1
                 dupe_set[il:to_string()] = true

@@ -21,8 +21,9 @@ local function measure(d, p, fn, args)
     local begin = os.clock()
     local result = fn(args)
     -- TODO: Better time formatting
-    print("== Day " .. d .. " part " .. p .. ": " .. result .. " (" ..
-              (os.clock() - begin) * 1000 .. "ms)")
+    -- print("== Day " .. d .. " part " .. p .. ": " .. result .. " (" ..
+    --         (os.clock() - begin) * 1000 .. "ms)")
+    print(string.format("== Day %d part %d: %u (%f) ms", d, p, result, (os.clock()-begin)  *1000))
 end
 
 local function test(d, p, fn, args, expected)
