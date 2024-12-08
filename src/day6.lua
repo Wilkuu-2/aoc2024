@@ -23,28 +23,6 @@ local function init(args)
     return start.x
 end
 
----@class Point
----@field x integer 
----@field y integer 
-Point = {}
-
-Point.mt = {__add = Point.add, __index = Point}
-
----Creates a point 
----@param x integer
----@param y integer
----@return Point
-function Point:new(x, y) return setmetatable({x = x, y = y}, Point.mt) end
-function Point:from_table(t) return setmetatable({x = t.x, y = t.y}, Point.mt) end
---- Adds two points together 
----@param a Point
----@param b Point 
----@return Point
-function Point.add(a, b) return Point:new(a.x + b.x, a.y + b.y) end
-
-function Point:copy() return Point:new(self.x, self.y) end
-
-function Point:to_string() return string.format("%d,%d", self.x, self.y) end
 
 ---@class Path
 ---@field grid Grid
@@ -89,23 +67,6 @@ function Path:step_add(p)
     return n
 end
 
-function table.pair_size(t)
-    local sum = 0
-    for _, _ in pairs(t) do sum = sum + 1 end
-    return sum
-end
-
-function table.deep_copy(t)
-    local out = {}
-    for key, value in pairs(t) do
-        if type(value) == "table" then
-            out[key] = table.deep_copy(value)
-        else
-            out[key] = value
-        end
-    end
-    return out
-end
 
 function Path.copy(p)
     local z = Path:create(p.grid, p.start:copy())

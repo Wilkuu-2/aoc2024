@@ -140,11 +140,13 @@ end
 
 function Grid:get_lines() return table.ipair_iter(self.data) end
 
+---comment
+---@return Iter<Point>
 function Grid:coords()
     return Iter:range(1, self.height):product(function(y)
         return Iter:range(1, self.width):map(function(x)
             -- print(x,y)
-            local t = {x = x, y = y}
+            local t = Point:new(x,y) 
             -- print(t)
             return t
         end)
@@ -171,14 +173,52 @@ function Grid:kernel_with_coords(w, h, f)
     return self:coords():map(function(c)
         return {
             g = self:rect_fill(c.x - cw, c.y - ch, w, h, f),
-            x = c.x,
-            y = c.y
+            c = c,
         }
     end)
 end
 
 function Grid:to_string() return self:get_lines():stitch_lines() end
 
+---@class Point
+---@field x number 
+---@field y number 
+Point = {}
+
+Point.mt = {__add = Point.add, __index = Point}
+
+---Creates a point 
+---@param x number
+---@param y number
+---@return Point
+function Point:new(x, y) return setmetatable({x = x, y = y}, Point.mt) end
+function Point:from_table(t) return Point:new(t.x,t.y) end
+--- Adds two points together 
+---@param a Point
+---@param b Point 
+---@return Point
+function Point.add(a, b) return Point:new(a.x + b.x, a.y + b.y) end
+
+function Point:copy() return Point:new(self.x, self.y) end
+
+function Point.sub(a,b) 
+  return Point:new(a.x - b.x, a.y-b.y)
+end 
+
+function Point:mul(s) 
+  return Point:new(self.x *  s,  self.y * s)
+end 
+
+
+local function round(a) 
+  return math.floor(a+0.5)
+end
+function Point:round() 
+  return Point:new(round(self.x),  round(self.y))
+end 
+
+function Point:to_string() return string.format("%d,%d", self.x, self.y) end
+function Point:to_string_float() return string.format("%f,%f", self.x, self.y) end
 local function test()
     print("creating grid")
     local test1 = Grid:fromLineIter(Iter:rep("12345", 5))

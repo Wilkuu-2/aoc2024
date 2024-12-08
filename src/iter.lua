@@ -273,7 +273,7 @@ function table.pair_iter(t)
         k, v = next(t, k)
         i = i + 1
         if v == nil then return nil end
-        return i, {v, k}
+        return i, {k, v}
     end)
     return iter
 end

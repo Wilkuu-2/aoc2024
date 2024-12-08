@@ -46,6 +46,24 @@ function table.copy(t)
     return setmetatable(u, getmetatable(t))
 end
 
+function table.pair_size(t)
+    local sum = 0
+    for _, _ in pairs(t) do sum = sum + 1 end
+    return sum
+end
+
+function table.deep_copy(t)
+    local out = {}
+    for key, value in pairs(t) do
+        if type(value) == "table" then
+            out[key] = table.deep_copy(value)
+        else
+            out[key] = value
+        end
+    end
+    return out
+end
+
 ---comment
 ---@param fn fun(i: {input:fun(): string|nil, state: table})
 ---@param args table 
