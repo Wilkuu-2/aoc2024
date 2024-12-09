@@ -135,7 +135,10 @@ end
 ---@param fn fun(R,T): R
 ---@return R
 function Iter:fold(init, fn)
-    for _, x in self.fn do init = fn(init, x) end
+    for _, x in self.fn do 
+      if x == nil then break end
+      init = fn(init, x)
+    end
     return init
 end
 
